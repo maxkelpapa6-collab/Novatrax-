@@ -1,0 +1,69 @@
+{
+  "properties": {
+    "action": {
+      "type": "string",
+      "description": "Type d'action (admin_space_access, admin_init, admin_init_failed, user_block, user_unblock, user_email_manual_verify, withdrawal_examine, withdrawal_approve, withdrawal_reject, withdrawal_mark_paid, deposit_confirm, deposit_reject, email_test_send, email_campaign_send, contact_export_csv, contact_export_vcf)"
+    },
+    "admin_email": {
+      "type": "string",
+      "description": "Adresse e-mail de l'administrateur ayant effectu\u00e9 l'action"
+    },
+    "admin_id": {
+      "type": "string",
+      "description": "Identifiant unique de l'administrateur"
+    },
+    "target_user_id": {
+      "type": "string",
+      "description": "Identifiant de l'utilisateur concern\u00e9 par l'action"
+    },
+    "target_id": {
+      "type": "string",
+      "description": "Identifiant de la transaction ou du retrait concern\u00e9"
+    },
+    "result": {
+      "type": "string",
+      "description": "R\u00e9sultat de l'op\u00e9ration",
+      "enum": [
+        "success",
+        "error"
+      ],
+      "default": "success"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Motif de l'action (blocage, rejet, v\u00e9rification manuelle\u2026)"
+    },
+    "details": {
+      "type": "string",
+      "description": "D\u00e9tails compl\u00e9mentaires de l'action (filtres, nombre d'enregistrements, etc.)"
+    }
+  },
+  "required": [
+    "action",
+    "admin_email"
+  ],
+  "name": "AuditLog",
+  "type": "object",
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

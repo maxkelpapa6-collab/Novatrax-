@@ -1,0 +1,54 @@
+{
+  "name": "Sponsorship",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Identifiant du filleul parrain\u00e9"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "E-mail du filleul parrain\u00e9"
+    },
+    "sponsor_id": {
+      "type": "string",
+      "description": "Identifiant du parrain d'origine \u2014 relation d\u00e9finitive, personne ne peut la changer ni la supprimer"
+    },
+    "sponsor_email": {
+      "type": "string",
+      "description": "E-mail du parrain d'origine"
+    }
+  },
+  "required": [
+    "user_id",
+    "sponsor_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "data.sponsor_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "data.user_id": "__relation_immuable__"
+    },
+    "delete": {
+      "data.user_id": "__relation_immuable__"
+    }
+  }
+}

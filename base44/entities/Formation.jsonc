@@ -1,0 +1,65 @@
+{
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Titre de la formation"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description de la formation"
+    },
+    "profile_image": {
+      "type": "string",
+      "description": "URL de la photo de profil de la formation (t\u00e9l\u00e9vers\u00e9e par l'administrateur, affich\u00e9e en grand sur la carte)"
+    },
+    "cover_image": {
+      "type": "string",
+      "description": "URL de l'image de couverture (bande d'arri\u00e8re-plan de la carte)"
+    },
+    "content": {
+      "type": "string",
+      "description": "Contenu d\u00e9taill\u00e9 de la formation (optionnel)"
+    },
+    "video_url": {
+      "type": "string",
+      "description": "URL de la vid\u00e9o de formation (lecture r\u00e9serv\u00e9e aux membres actifs)"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL du document t\u00e9l\u00e9chargeable (support de formation)"
+    },
+    "published": {
+      "type": "boolean",
+      "description": "Indique si la formation est publi\u00e9e (les non-publi\u00e9es sont affich\u00e9es \u00ab En pr\u00e9paration \u00bb sans leur contenu)",
+      "default": false
+    }
+  },
+  "required": [
+    "title",
+    "description"
+  ],
+  "name": "Formation",
+  "type": "object",
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

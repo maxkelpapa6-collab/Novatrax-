@@ -1,0 +1,40 @@
+{
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nom de la cat\u00e9gorie autoris\u00e9e (ex. Mode & v\u00eatements, \u00c9lectronique\u2026)"
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Cat\u00e9gorie ouverte aux nouvelles annonces",
+      "default": true
+    },
+    "sort_order": {
+      "type": "number",
+      "description": "Ordre d'affichage de la cat\u00e9gorie"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "name": "MarketplaceCategory",
+  "type": "object",
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "properties": {
+    "campaign_id": {
+      "type": "string",
+      "description": "Identifiant de la campagne concern\u00e9e"
+    },
+    "recipient_email": {
+      "type": "string",
+      "description": "Adresse e-mail du destinataire"
+    },
+    "recipient_user_id": {
+      "type": "string",
+      "description": "Identifiant de l'utilisateur destinataire"
+    },
+    "status": {
+      "type": "string",
+      "description": "R\u00e9sultat de l'envoi",
+      "enum": [
+        "sent",
+        "failed"
+      ]
+    },
+    "error": {
+      "type": "string",
+      "description": "D\u00e9tail de l'erreur en cas d'\u00e9chec"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "recipient_email",
+    "status"
+  ],
+  "name": "EmailDeliveryLog",
+  "type": "object",
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

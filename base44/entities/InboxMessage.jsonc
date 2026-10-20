@@ -1,0 +1,94 @@
+{
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Identifiant du destinataire"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "E-mail du destinataire"
+    },
+    "title": {
+      "type": "string",
+      "description": "Titre / objet de la notification"
+    },
+    "body_text": {
+      "type": "string",
+      "description": "Contenu texte de la notification affich\u00e9 dans la bo\u00eete de r\u00e9ception"
+    },
+    "type": {
+      "type": "string",
+      "description": "Nature de la notification",
+      "enum": [
+        "admin_message",
+        "commission",
+        "system"
+      ],
+      "default": "system"
+    },
+    "campaign_id": {
+      "type": "string",
+      "description": "Identifiant de la campagne e-mail \u00e0 l'origine du message (si applicable)"
+    },
+    "read": {
+      "type": "boolean",
+      "description": "Indique si le destinataire a lu le message",
+      "default": false
+    },
+    "read_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date de lecture du message"
+    }
+  },
+  "required": [
+    "user_id",
+    "title",
+    "body_text"
+  ],
+  "name": "InboxMessage",
+  "type": "object",
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nom de l'application"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description de l'application"
+    },
+    "logo_image": {
+      "type": "string",
+      "description": "URL du logo ou de l'image de l'application"
+    },
+    "presentation_image": {
+      "type": "string",
+      "description": "URL de l'image de pr\u00e9sentation (capture d'\u00e9cran)"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version de l'application (ex. 1.2.0)"
+    },
+    "features": {
+      "type": "string",
+      "description": "Fonctionnalit\u00e9s principales (texte)"
+    },
+    "price": {
+      "type": "string",
+      "description": "Prix affich\u00e9 (ex. 'Gratuit', '15 000 FCFA')"
+    },
+    "download_type": {
+      "type": "string",
+      "description": "Mode de t\u00e9l\u00e9chargement : external_link (lien externe configur\u00e9) ou apk_file (fichier APK t\u00e9l\u00e9vers\u00e9 dans le stockage priv\u00e9)",
+      "enum": [
+        "external_link",
+        "apk_file"
+      ],
+      "default": "external_link"
+    },
+    "download_url": {
+      "type": "string",
+      "description": "Lien de t\u00e9l\u00e9chargement externe (obligatoire pour le mode \u00ab Lien externe \u00bb)"
+    },
+    "purchase_url": {
+      "type": "string",
+      "description": "Lien d'achat (configur\u00e9 par l'administrateur)"
+    },
+    "apk_file_uri": {
+      "type": "string",
+      "description": "R\u00e9f\u00e9rence interne du fichier APK dans le stockage priv\u00e9 \u2014 jamais expos\u00e9e aux membres : le t\u00e9l\u00e9chargement passe par la fonction prot\u00e9g\u00e9e apkDownload"
+    },
+    "apk_file_name": {
+      "type": "string",
+      "description": "Nom du fichier APK t\u00e9l\u00e9vers\u00e9"
+    },
+    "apk_file_size": {
+      "type": "number",
+      "description": "Taille du fichier APK en octets"
+    },
+    "apk_file_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date de t\u00e9l\u00e9versement du fichier APK"
+    },
+    "published": {
+      "type": "boolean",
+      "description": "Indique si l'application est visible et t\u00e9l\u00e9chargeable par les membres actifs",
+      "default": false
+    }
+  },
+  "required": [
+    "name",
+    "description"
+  ],
+  "name": "Application",
+  "type": "object",
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

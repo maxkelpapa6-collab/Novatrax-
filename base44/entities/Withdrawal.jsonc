@@ -1,0 +1,123 @@
+{
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Identifiant de l'utilisateur demandeur"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "E-mail de l'utilisateur demandeur"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Nom complet de l'utilisateur demandeur"
+    },
+    "user_phone": {
+      "type": "string",
+      "description": "Num\u00e9ro de t\u00e9l\u00e9phone de l'utilisateur"
+    },
+    "amount_fcfa": {
+      "type": "number",
+      "description": "Montant demand\u00e9 en FCFA (minimum 1500)"
+    },
+    "country": {
+      "type": "string",
+      "description": "Code pays de l'utilisateur"
+    },
+    "payment_method": {
+      "type": "string",
+      "description": "Moyen de paiement : op\u00e9rateur Mobile Money disponible dans le pays du demandeur (ex. orange_money, mtn_momo, mixx_by_yas, wave\u2026) ou virement bancaire",
+      "enum": [
+        "mobile_money",
+        "bank_transfer",
+        "other",
+        "orange_money",
+        "mtn_momo",
+        "moov_money",
+        "wave",
+        "mixx_by_yas",
+        "free_money",
+        "airtel_money",
+        "m_pesa"
+      ]
+    },
+    "reception_number": {
+      "type": "string",
+      "description": "Num\u00e9ro de r\u00e9ception du paiement (ou compte bancaire / IBAN pour un virement)"
+    },
+    "transaction_ref": {
+      "type": "string",
+      "description": "Identifiant de transaction unique"
+    },
+    "status": {
+      "type": "string",
+      "description": "Statut du retrait",
+      "enum": [
+        "pending",
+        "processing",
+        "approved",
+        "paid",
+        "rejected",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "admin_notes": {
+      "type": "string",
+      "description": "Notes administratives"
+    },
+    "rejection_reason": {
+      "type": "string",
+      "description": "Motif du rejet"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "description": "E-mail de l'administrateur ayant trait\u00e9 la demande"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date de la d\u00e9cision administrative"
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date de confirmation r\u00e9elle du paiement"
+    }
+  },
+  "required": [
+    "user_id",
+    "user_email",
+    "amount_fcfa",
+    "status"
+  ],
+  "name": "Withdrawal",
+  "type": "object",
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "data.user_id": "{{user.id}}"
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

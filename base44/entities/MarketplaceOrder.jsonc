@@ -1,0 +1,171 @@
+{
+  "properties": {
+    "order_ref": {
+      "type": "string",
+      "description": "R\u00e9f\u00e9rence unique de la commande (MKT-\u2026)"
+    },
+    "product_id": {
+      "type": "string",
+      "description": "Identifiant du produit achet\u00e9"
+    },
+    "product_name": {
+      "type": "string",
+      "description": "Nom du produit au moment de l'achat"
+    },
+    "product_image": {
+      "type": "string",
+      "description": "Photo du produit au moment de l'achat"
+    },
+    "product_price_fcfa": {
+      "type": "number",
+      "description": "Prix pay\u00e9 par l'acheteur en FCFA"
+    },
+    "commission_fcfa": {
+      "type": "number",
+      "description": "Commission NOVATRAX (10 % du prix) pr\u00e9lev\u00e9e automatiquement"
+    },
+    "net_fcfa": {
+      "type": "number",
+      "description": "Montant net attribu\u00e9 au vendeur (90 %) apr\u00e8s validation de la vente"
+    },
+    "buyer_id": {
+      "type": "string",
+      "description": "Identifiant de l'acheteur"
+    },
+    "buyer_email": {
+      "type": "string",
+      "description": "E-mail de l'acheteur"
+    },
+    "buyer_name": {
+      "type": "string",
+      "description": "Nom complet de l'acheteur"
+    },
+    "buyer_phone": {
+      "type": "string",
+      "description": "Num\u00e9ro de t\u00e9l\u00e9phone de l'acheteur (pour la livraison)"
+    },
+    "seller_id": {
+      "type": "string",
+      "description": "Identifiant du vendeur"
+    },
+    "seller_email": {
+      "type": "string",
+      "description": "E-mail du vendeur"
+    },
+    "seller_name": {
+      "type": "string",
+      "description": "Nom complet du vendeur"
+    },
+    "seller_phone": {
+      "type": "string",
+      "description": "Num\u00e9ro de t\u00e9l\u00e9phone du vendeur"
+    },
+    "payment_reference": {
+      "type": "string",
+      "description": "R\u00e9f\u00e9rence du paiement LeekPay li\u00e9 \u00e0 la commande"
+    },
+    "checkout_id": {
+      "type": "string",
+      "description": "Identifiant du checkout LeekPay (v\u00e9rification serveur)"
+    },
+    "checkout_url": {
+      "type": "string",
+      "description": "URL de paiement LeekPay de la commande"
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date de confirmation r\u00e9elle du paiement par le prestataire"
+    },
+    "status": {
+      "type": "string",
+      "description": "Statut de la commande : awaiting_payment (en attente de paiement), processing (paiement confirm\u00e9 \u2014 vente en cours), completed (termin\u00e9e \u2014 vendeur cr\u00e9dit\u00e9), cancelled (annul\u00e9e : paiement \u00e9chou\u00e9 ou abandonn\u00e9), refunded (rembours\u00e9e), disputed (en litige)",
+      "enum": [
+        "awaiting_payment",
+        "processing",
+        "completed",
+        "cancelled",
+        "refunded",
+        "disputed"
+      ],
+      "default": "awaiting_payment"
+    },
+    "sale_transaction_id": {
+      "type": "string",
+      "description": "Identifiant de la transaction portefeuille cr\u00e9ditant le vendeur (\u00e9criture unique par commande)"
+    },
+    "refund_transaction_id": {
+      "type": "string",
+      "description": "Identifiant de la transaction remboursant l'acheteur"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date de fin de la commande (cr\u00e9dit du vendeur)"
+    },
+    "refunded_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date du remboursement"
+    },
+    "dispute_reason": {
+      "type": "string",
+      "description": "Motif du litige ouvert par l'acheteur ou le vendeur"
+    },
+    "resolution_note": {
+      "type": "string",
+      "description": "D\u00e9cision administrative sur le litige ou le remboursement"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "description": "E-mail de l'administrateur ayant statu\u00e9 sur la commande"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date de la d\u00e9cision administrative"
+    }
+  },
+  "required": [
+    "order_ref",
+    "product_id",
+    "product_price_fcfa",
+    "commission_fcfa",
+    "net_fcfa",
+    "buyer_id",
+    "seller_id",
+    "status"
+  ],
+  "name": "MarketplaceOrder",
+  "type": "object",
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.buyer_id": "{{user.id}}"
+        },
+        {
+          "data.seller_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "data.buyer_id": "{{user.id}}"
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

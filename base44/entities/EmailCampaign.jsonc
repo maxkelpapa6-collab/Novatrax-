@@ -1,0 +1,88 @@
+{
+  "properties": {
+    "subject": {
+      "type": "string",
+      "description": "Objet du message"
+    },
+    "body_html": {
+      "type": "string",
+      "description": "Contenu HTML s\u00e9curis\u00e9 du message"
+    },
+    "body_text": {
+      "type": "string",
+      "description": "Contenu texte simple du message"
+    },
+    "audience_type": {
+      "type": "string",
+      "description": "Groupe de destinataires",
+      "enum": [
+        "all",
+        "country",
+        "active",
+        "period"
+      ]
+    },
+    "audience_details": {
+      "type": "string",
+      "description": "D\u00e9tails du filtre d'audience (pays, p\u00e9riode\u2026)"
+    },
+    "recipients_count": {
+      "type": "number",
+      "description": "Nombre de destinataires concern\u00e9s"
+    },
+    "sent_count": {
+      "type": "number",
+      "description": "Nombre d'e-mails envoy\u00e9s avec succ\u00e8s"
+    },
+    "failed_count": {
+      "type": "number",
+      "description": "Nombre d'\u00e9checs d'envoi"
+    },
+    "status": {
+      "type": "string",
+      "description": "Statut de la campagne",
+      "enum": [
+        "sending",
+        "sent",
+        "failed",
+        "partial"
+      ],
+      "default": "sending"
+    },
+    "sent_by": {
+      "type": "string",
+      "description": "Identifiant de l'administrateur exp\u00e9diteur"
+    },
+    "sent_by_email": {
+      "type": "string",
+      "description": "E-mail de l'administrateur exp\u00e9diteur"
+    }
+  },
+  "required": [
+    "subject"
+  ],
+  "name": "EmailCampaign",
+  "type": "object",
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

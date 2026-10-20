@@ -1,0 +1,113 @@
+{
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Type d'op\u00e9ration financi\u00e8re",
+      "enum": [
+        "deposit",
+        "withdrawal",
+        "adjustment"
+      ],
+      "default": "deposit"
+    },
+    "purpose": {
+      "type": "string",
+      "description": "Nature de l'op\u00e9ration : frais d'acc\u00e8s Pro (3 000 FCFA, non cr\u00e9dit\u00e9s au solde retirable), d\u00e9p\u00f4t de portefeuille, vente Marketplace cr\u00e9dit\u00e9e au vendeur, remboursement d'un achat Marketplace, paiement re\u00e7u via un lien de paiement, bonus de bienvenue (500 FCFA, r\u00e9serv\u00e9 jusqu'\u00e0 5 filleuls ayant effectu\u00e9 leur premier d\u00e9p\u00f4t confirm\u00e9)",
+      "enum": [
+        "access_fee",
+        "wallet",
+        "marketplace_sale",
+        "marketplace_refund",
+        "payment_link",
+        "welcome_bonus"
+      ],
+      "default": "wallet"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "Identifiant de l'utilisateur concern\u00e9"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "E-mail de l'utilisateur concern\u00e9"
+    },
+    "amount_fcfa": {
+      "type": "number",
+      "description": "Montant en FCFA"
+    },
+    "status": {
+      "type": "string",
+      "description": "Statut de l'op\u00e9ration (confirm\u00e9 uniquement apr\u00e8s v\u00e9rification r\u00e9elle du prestataire, d\u00e9verrouillage automatique du bonus de bienvenue ou d\u00e9cision administratrice journalis\u00e9e)",
+      "enum": [
+        "pending",
+        "confirmed",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "method": {
+      "type": "string",
+      "description": "Moyen ou origine du paiement (leekpay, mobile_money, bank_transfer, affiliate_commission, marketplace, payment_link, welcome_bonus, other)"
+    },
+    "reference": {
+      "type": "string",
+      "description": "R\u00e9f\u00e9rence du paiement (unique pour les frais d'acc\u00e8s, les ventes Marketplace, les paiements par lien et le bonus de bienvenue : emp\u00eache le double cr\u00e9dit)"
+    },
+    "checkout_id": {
+      "type": "string",
+      "description": "Identifiant du checkout chez LeekPay (v\u00e9rification du statut c\u00f4t\u00e9 serveur)"
+    },
+    "checkout_url": {
+      "type": "string",
+      "description": "URL de paiement LeekPay renvoy\u00e9e lors de la cr\u00e9ation du checkout"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description de l'op\u00e9ration"
+    },
+    "confirmed_by": {
+      "type": "string",
+      "description": "E-mail de l'administrateur ayant confirm\u00e9 l'op\u00e9ration"
+    },
+    "confirmed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date de confirmation"
+    }
+  },
+  "required": [
+    "type",
+    "user_id",
+    "amount_fcfa",
+    "status"
+  ],
+  "name": "Transaction",
+  "type": "object",
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "data.user_id": "{{user.id}}"
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

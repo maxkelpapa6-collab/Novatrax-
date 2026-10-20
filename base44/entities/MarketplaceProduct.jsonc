@@ -1,0 +1,100 @@
+{
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nom du produit (obligatoire, 3 \u00e0 100 caract\u00e8res)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description du produit (facultative, 500 caract\u00e8res maximum, aucun lien externe tol\u00e9r\u00e9)"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "URL de la photo du produit (obligatoire, t\u00e9l\u00e9vers\u00e9e dans le stockage public, affich\u00e9e en grand format)"
+    },
+    "price_fcfa": {
+      "type": "number",
+      "description": "Prix de vente en FCFA (100 \u00e0 5 000 000)"
+    },
+    "category": {
+      "type": "string",
+      "description": "Cat\u00e9gorie autoris\u00e9e du produit (g\u00e9r\u00e9e par l'administrateur)"
+    },
+    "seller_id": {
+      "type": "string",
+      "description": "Identifiant du vendeur"
+    },
+    "seller_email": {
+      "type": "string",
+      "description": "E-mail du vendeur"
+    },
+    "seller_name": {
+      "type": "string",
+      "description": "Nom complet du vendeur"
+    },
+    "seller_phone": {
+      "type": "string",
+      "description": "Num\u00e9ro de t\u00e9l\u00e9phone du vendeur (seul canal de contact autoris\u00e9 dans l'annonce)"
+    },
+    "status": {
+      "type": "string",
+      "description": "Statut de l'annonce : pending (en attente de validation administrative), published (visible), rejected (refus\u00e9e), blocked (bloqu\u00e9e automatiquement pour infraction aux r\u00e8gles), hidden (masqu\u00e9e par l'administrateur)",
+      "enum": [
+        "pending",
+        "published",
+        "rejected",
+        "blocked",
+        "hidden"
+      ],
+      "default": "pending"
+    },
+    "blocked_reason": {
+      "type": "string",
+      "description": "Motif du blocage automatique (lien externe, produit interdit\u2026)"
+    },
+    "rejection_reason": {
+      "type": "string",
+      "description": "Motif du refus par l'administrateur"
+    }
+  },
+  "required": [
+    "name",
+    "price_fcfa",
+    "category",
+    "seller_id",
+    "seller_phone",
+    "status"
+  ],
+  "name": "MarketplaceProduct",
+  "type": "object",
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.status": "published"
+        },
+        {
+          "data.seller_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "data.seller_id": "{{user.id}}"
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "properties": {
+    "value": {
+      "type": "string",
+      "description": "Mot-cl\u00e9 interdit d\u00e9tect\u00e9 dans les annonces (produits interdits, revente de produits NOVATRAX, contenus frauduleux\u2026)"
+    },
+    "note": {
+      "type": "string",
+      "description": "Note explicative de la r\u00e8gle"
+    },
+    "active": {
+      "type": "boolean",
+      "description": "R\u00e8gle appliqu\u00e9e lors de la v\u00e9rification automatique des annonces",
+      "default": true
+    }
+  },
+  "required": [
+    "value"
+  ],
+  "name": "MarketplaceRule",
+  "type": "object",
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

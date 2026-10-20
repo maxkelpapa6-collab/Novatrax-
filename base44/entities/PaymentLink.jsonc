@@ -1,0 +1,95 @@
+{
+  "name": "PaymentLink",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nom du lien de paiement affich\u00e9 aux payeurs (3 \u00e0 100 caract\u00e8res)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description affich\u00e9e sur la page de paiement (obligatoire, 500 caract\u00e8res maximum, aucun lien externe tol\u00e9r\u00e9)"
+    },
+    "profile_image": {
+      "type": "string",
+      "description": "URL de la photo de profil affich\u00e9e sur la page de paiement publique"
+    },
+    "price_type": {
+      "type": "string",
+      "description": "Type de prix : fixe (montant unique) ou variable (montant libre encadr\u00e9 par un minimum et un maximum)",
+      "enum": [
+        "fixed",
+        "variable"
+      ],
+      "default": "fixed"
+    },
+    "price_fcfa": {
+      "type": "number",
+      "description": "Montant fixe \u00e0 payer en FCFA (mode \u00ab Prix fixe \u00bb)"
+    },
+    "min_fcfa": {
+      "type": "number",
+      "description": "Montant minimum accept\u00e9 en FCFA (mode \u00ab Prix variable \u00bb)"
+    },
+    "max_fcfa": {
+      "type": "number",
+      "description": "Montant maximum accept\u00e9 en FCFA (mode \u00ab Prix variable \u00bb)"
+    },
+    "creator_id": {
+      "type": "string",
+      "description": "Identifiant du membre cr\u00e9ateur du lien"
+    },
+    "creator_name": {
+      "type": "string",
+      "description": "Nom complet du cr\u00e9ateur affich\u00e9 aux payeurs"
+    },
+    "status": {
+      "type": "string",
+      "description": "Statut du lien : actif, en pause (par le cr\u00e9ateur) ou bloqu\u00e9 (par l'administration)",
+      "enum": [
+        "active",
+        "paused",
+        "blocked"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "name",
+    "description",
+    "profile_image",
+    "price_type",
+    "creator_id",
+    "status"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "data.creator_id": "{{user.id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "data.creator_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.creator_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
