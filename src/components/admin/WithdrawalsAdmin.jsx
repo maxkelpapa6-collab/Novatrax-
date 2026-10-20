@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { getCountry, WITHDRAWAL_METHOD_LABELS } from "@/lib/countries";
 import { formatFcfa } from "@/lib/commissions";
 import { toast } from "@/components/ui/use-toast";
@@ -20,7 +20,7 @@ export default function WithdrawalsAdmin() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await base44.entities.Withdrawal.filter({}, { sort: "-created_date", limit: 100 });
+      const res = await api.entities.Withdrawal.filter({}, { sort: "-created_date", limit: 100 });
       setRows(res.items || []);
     } finally {
       setLoading(false);
@@ -32,7 +32,7 @@ export default function WithdrawalsAdmin() {
   const run = async (action, id, noteArg) => {
     setBusy((b) => ({ ...b, [id]: action }));
     try {
-      const res = await base44.functions.invoke("adminFinance", { action, id, note: noteArg || "" });
+      const res = await api.functions.invoke("adminFinance", { action, id, note: noteArg || "" });
       toast({ title: "Décision enregistrée", description: "Nouveau statut : " + (res.data?.status || "ok") });
       setNoteFor(null);
       setNote("");

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { useAuth } from "@/lib/AuthContext";
 import { Image } from "@/components/ui/image";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ export default function ProductDetail() {
 
   useEffect(() => {
     setLoading(true);
-    base44.entities.MarketplaceProduct.get(id)
+    api.entities.MarketplaceProduct.get(id)
       .then((p) => setProduct(p))
       .catch(() => setProduct(null))
       .finally(() => setLoading(false));
@@ -33,7 +33,7 @@ export default function ProductDetail() {
     if (!product || buying) return;
     setBuying(true);
     try {
-      const res = await base44.functions.invoke("marketplacePurchase", { product_id: product.id });
+      const res = await api.functions.invoke("marketplacePurchase", { product_id: product.id });
       const data = res.data || {};
       if (data.payment_url) {
         window.location.href = data.payment_url;

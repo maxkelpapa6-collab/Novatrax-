@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { COUNTRIES, getCountry } from "@/lib/countries";
 import { usersToCSV, usersToVCF, downloadCSV, downloadVCF } from "@/lib/export";
 import {
@@ -30,7 +30,7 @@ export default function AdminContacts({ adminEmail }) {
     setLoading(true);
     setError("");
     try {
-      const res = await base44.entities.User.filter({});
+      const res = await api.entities.User.filter({});
       const list = Array.isArray(res) ? res : res.items || [];
       list.sort((a, b) => new Date(b.created_date || 0) - new Date(a.created_date || 0));
       setAll(list);
@@ -85,7 +85,7 @@ export default function AdminContacts({ adminEmail }) {
   const logAndExport = async (format, records) => {
     setExporting(true);
     try {
-      await base44.entities.AuditLog.create({
+      await api.entities.AuditLog.create({
         action: format === "csv" ? "contact_export_csv" : "contact_export_vcf",
         admin_email: adminEmail || "admin",
         details: `${records.length} contact(s) exporté(s). Filtres: ${search ? `recherche="${search}" ` : ""}${countryFilter ? `pays=${countryFilter} ` : ""}${statusFilter ? `statut=${statusFilter} ` : ""}${consentFilter ? `partage=${consentFilter} ` : ""}${dateFrom || dateTo ? `date=${dateFrom || "…"}→${dateTo || "…"}` : ""}`.trim(),

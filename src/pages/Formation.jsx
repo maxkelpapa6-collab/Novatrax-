@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { GraduationCap, Plus, BookOpen } from "lucide-react";
 import FeatureLocked from "@/components/FeatureLocked";
 import FormationCard from "@/components/formations/FormationCard";
@@ -21,7 +21,7 @@ export default function Formation() {
     setLoading(true);
     if (!isAdmin) {
       try {
-        const res = await base44.functions.invoke("memberContent", {});
+        const res = await api.functions.invoke("memberContent", {});
         if (res.data?.locked) setLocked(true);
         else setItems(res.data?.formations || []);
       } catch (e) {
@@ -32,7 +32,7 @@ export default function Formation() {
       return;
     }
     try {
-      const res = await base44.entities.Formation.filter({}, { sort: "-created_date", limit: 100 });
+      const res = await api.entities.Formation.filter({}, { sort: "-created_date", limit: 100 });
       setItems(res.items || []);
     } catch (e) {
       setItems([]);
@@ -49,7 +49,7 @@ export default function Formation() {
   const onDelete = async (f) => {
     if (!confirm(`Supprimer la formation « ${f.title} » ?`)) return;
     try {
-      await base44.entities.Formation.delete(f.id);
+      await api.entities.Formation.delete(f.id);
       setItems((prev) => prev.filter((i) => i.id !== f.id));
     } catch (e) {
       alert("Suppression impossible : " + (e?.message || "erreur"));

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { COUNTRIES } from "@/lib/countries";
 import { useToast } from "@/components/ui/use-toast";
 import { Mail, Send, Users, Loader2, History } from "lucide-react";
@@ -39,7 +39,7 @@ export default function MessagesAdmin() {
   const loadHistory = useCallback(async () => {
     setHistoryLoading(true);
     try {
-      const page = await base44.entities.EmailCampaign.filter({}, { sort: "-created_date", limit: 5 });
+      const page = await api.entities.EmailCampaign.filter({}, { sort: "-created_date", limit: 5 });
       setHistory(page.items || (Array.isArray(page) ? page : []));
     } catch (e) {
       setHistory([]);
@@ -60,7 +60,7 @@ export default function MessagesAdmin() {
   const countRecipients = async () => {
     setCounting(true);
     try {
-      const res = await base44.functions.invoke("adminEmailCampaign", { action: "count", audience });
+      const res = await api.functions.invoke("adminEmailCampaign", { action: "count", audience });
       setCount(res.data?.count ?? 0);
     } catch (e) {
       handleError(e);
@@ -72,7 +72,7 @@ export default function MessagesAdmin() {
   const sendTest = async () => {
     setTesting(true);
     try {
-      await base44.functions.invoke("adminEmailCampaign", {
+      await api.functions.invoke("adminEmailCampaign", {
         action: "test",
         subject,
         body_text: message,
@@ -91,7 +91,7 @@ export default function MessagesAdmin() {
   const sendAll = async () => {
     setSending(true);
     try {
-      const res = await base44.functions.invoke("adminEmailCampaign", {
+      const res = await api.functions.invoke("adminEmailCampaign", {
         action: "send",
         subject,
         body_text: message,

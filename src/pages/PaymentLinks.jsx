@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { useAuth } from "@/lib/AuthContext";
 import { useMemberHome } from "@/hooks/useMemberHome";
 import { formatFcfa } from "@/lib/commissions";
@@ -36,7 +36,7 @@ export default function PaymentLinks() {
     if (!user?.id) return;
     setLoading(true);
     try {
-      const page = await base44.entities.PaymentLink.filter(
+      const page = await api.entities.PaymentLink.filter(
         { creator_id: user.id },
         { sort: "-created_date", limit: 50 }
       );
@@ -55,7 +55,7 @@ export default function PaymentLinks() {
   const submitLink = async (data) => {
     setSubmitting(true);
     try {
-      await base44.functions.invoke("paymentLink", {
+      await api.functions.invoke("paymentLink", {
         action: editing === "new" ? "create" : "update",
         link_id: editing !== "new" ? editing.id : undefined,
         ...data,
@@ -80,7 +80,7 @@ export default function PaymentLinks() {
   const toggleLink = async (link) => {
     setBusy(true);
     try {
-      const res = await base44.functions.invoke("paymentLink", { action: "toggle", link_id: link.id });
+      const res = await api.functions.invoke("paymentLink", { action: "toggle", link_id: link.id });
       toast({ title: res.data?.status === "active" ? "Lien réactivé" : "Lien mis en pause" });
       load();
     } catch (e) {
@@ -94,7 +94,7 @@ export default function PaymentLinks() {
     if (!window.confirm(`Supprimer le lien « ${link.name} » ? Les paiements déjà reçus restent conservés.`)) return;
     setBusy(true);
     try {
-      await base44.functions.invoke("paymentLink", { action: "delete", link_id: link.id });
+      await api.functions.invoke("paymentLink", { action: "delete", link_id: link.id });
       toast({ title: "Lien supprimé" });
       load();
     } catch (e) {
@@ -223,8 +223,8 @@ function PaymentsTab({ user, balance }) {
     let alive = true;
     setLoading(true);
     Promise.all([
-      base44.entities.PaymentLinkPayment.filter({ creator_id: user.id }, { sort: "-created_date", limit: 50 }),
-      base44.entities.PaymentLinkPayment.aggregate({
+      api.entities.PaymentLinkPayment.filter({ creator_id: user.id }, { sort: "-created_date", limit: 50 }),
+      api.entities.PaymentLinkPayment.aggregate({
         query: { creator_id: user.id },
         groupBy: "status",
         sum: ["net_fcfa", "amount_fcfa"],
@@ -244,7 +244,7 @@ function PaymentsTab({ user, balance }) {
       .catch(() => alive && setPayments([]))
       .finally(() => alive && setLoading(false));
     // Temps réel : les paiements se mettent à jour sans rechargement.
-    const unsubscribe = base44.entities.PaymentLinkPayment.subscribe(() => {
+    const unsubscribe = api.entities.PaymentLinkPayment.subscribe(() => {
       if (alive) setLoading(true);
     });
     return () => { alive = false; unsubscribe(); };

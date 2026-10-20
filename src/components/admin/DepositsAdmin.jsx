@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { formatFcfa } from "@/lib/commissions";
 import { toast } from "@/components/ui/use-toast";
 import FinanceBadge from "@/components/FinanceBadge";
@@ -18,7 +18,7 @@ export default function DepositsAdmin() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await base44.entities.Transaction.filter({ type: "deposit" }, { sort: "-created_date", limit: 100 });
+      const res = await api.entities.Transaction.filter({ type: "deposit" }, { sort: "-created_date", limit: 100 });
       setRows(res.items || []);
     } finally {
       setLoading(false);
@@ -30,7 +30,7 @@ export default function DepositsAdmin() {
   const run = async (action, id, noteArg) => {
     setBusy((b) => ({ ...b, [id]: action }));
     try {
-      const res = await base44.functions.invoke("adminFinance", { action, id, note: noteArg || "" });
+      const res = await api.functions.invoke("adminFinance", { action, id, note: noteArg || "" });
       const status = res.data?.status;
       toast({
         title: status === "pending" ? "Vérification effectuée" : "Opération enregistrée",

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { COUNTRIES, getCountry } from "@/lib/countries";
 import { User as UserIcon, Mail, Phone, Globe, Save, CheckCircle2 } from "lucide-react";
 
@@ -39,7 +39,7 @@ export default function Profile() {
       const phone = form.phone && selected && !form.phone.startsWith("+")
         ? selected.dialCode + form.phone.replace(/\s/g, "")
         : form.phone;
-      await base44.auth.updateMe({
+      await api.auth.updateMe({
         first_name: form.first_name,
         last_name: form.last_name,
         country: form.country,

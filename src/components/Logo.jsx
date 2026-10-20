@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/image";
 
-export const LOGO_URL = "https://media.base44.com/images/public/6ad0d39326ed4b1a37df4567/ebb8af7fb_408358BC-048B-4229-BF94-04577945B068.png";
+// Remplacez public/logo.svg par votre logo (même nom, ou modifiez ce chemin).
+export const LOGO_URL = "/logo.svg";
 
 const SIZES = {
   sm: { mark: 28, text: "text-lg" },

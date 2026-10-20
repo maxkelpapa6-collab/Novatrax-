@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { Image } from "@/components/ui/image";
 import { formatFcfa } from "@/lib/commissions";
 import { Link2, TrendingUp, Clock3, Search, ExternalLink, Loader2 } from "lucide-react";
@@ -29,9 +29,9 @@ export default function PaymentLinksAdmin() {
     let alive = true;
     setLoadingStats(true);
     Promise.all([
-      base44.entities.PaymentLink.count().catch(() => null),
-      base44.entities.PaymentLink.count({ status: "active" }).catch(() => null),
-      base44.entities.PaymentLinkPayment.aggregate({
+      api.entities.PaymentLink.count().catch(() => null),
+      api.entities.PaymentLink.count({ status: "active" }).catch(() => null),
+      api.entities.PaymentLinkPayment.aggregate({
         query: {},
         groupBy: "status",
         sum: ["amount_fcfa", "commission_fcfa"],
@@ -113,7 +113,7 @@ function LinksTab() {
     try {
       const opts = { sort: "-created_date", limit: 50 };
       if (nextCursor) opts.cursor = nextCursor;
-      const page = await base44.entities.PaymentLink.filter({}, opts);
+      const page = await api.entities.PaymentLink.filter({}, opts);
       const items = page.items || [];
       setLinks((prev) => (nextCursor ? [...prev, ...items] : items));
       setHasMore(!!page.has_more);
@@ -128,7 +128,7 @@ function LinksTab() {
 
   useEffect(() => {
     load(null);
-    base44.entities.PaymentLinkPayment.aggregate({
+    api.entities.PaymentLinkPayment.aggregate({
       query: { status: "completed" },
       groupBy: "link_id",
       sum: ["amount_fcfa"],
@@ -233,7 +233,7 @@ function PaymentsTab() {
       const query = status === "all" ? {} : { status };
       const opts = { sort: "-created_date", limit: 50 };
       if (nextCursor) opts.cursor = nextCursor;
-      const page = await base44.entities.PaymentLinkPayment.filter(query, opts);
+      const page = await api.entities.PaymentLinkPayment.filter(query, opts);
       const items = page.items || [];
       setPayments((prev) => (nextCursor ? [...prev, ...items] : items));
       setHasMore(!!page.has_more);

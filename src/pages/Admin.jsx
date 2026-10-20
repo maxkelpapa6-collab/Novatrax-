@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { getCountry } from "@/lib/countries";
 import {
   LayoutDashboard, Users, GraduationCap, Smartphone, ScrollText, Ban, CheckCircle2,
@@ -97,10 +97,10 @@ function Overview() {
     (async () => {
       try {
         const [users, forms, apps, audits] = await Promise.all([
-          base44.entities.User.filter({}).then((r) => (Array.isArray(r) ? r : r.items || []).length).catch(() => null),
-          base44.entities.Formation.count().catch(() => null),
-          base44.entities.Application.count().catch(() => null),
-          base44.entities.AuditLog.filter({}, { limit: 100 }).then((r) => r.items?.length ?? 0).catch(() => null),
+          api.entities.User.filter({}).then((r) => (Array.isArray(r) ? r : r.items || []).length).catch(() => null),
+          api.entities.Formation.count().catch(() => null),
+          api.entities.Application.count().catch(() => null),
+          api.entities.AuditLog.filter({}, { limit: 100 }).then((r) => r.items?.length ?? 0).catch(() => null),
         ]);
         setStats({ members: users, formations: forms, apps, audits });
       } finally {
@@ -174,7 +174,7 @@ function UsersManager({ adminEmail }) {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await base44.entities.User.filter({});
+      const res = await api.entities.User.filter({});
       const list = Array.isArray(res) ? res : res.items || [];
       list.sort((a, b) => new Date(b.created_date || 0) - new Date(a.created_date || 0));
       setUsers(list);
@@ -191,8 +191,8 @@ function UsersManager({ adminEmail }) {
     const next = u.account_status === "suspended" ? "active" : "suspended";
     setBusy((b) => ({ ...b, [u.id]: true }));
     try {
-      await base44.entities.User.update(u.id, { account_status: next });
-      await base44.entities.AuditLog.create({
+      await api.entities.User.update(u.id, { account_status: next });
+      await api.entities.AuditLog.create({
         action: next === "suspended" ? "user_suspend" : "user_reactivate",
         admin_email: adminEmail || "admin",
         details: `Utilisateur: ${u.email}`,
@@ -276,7 +276,7 @@ function AuditLogView() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await base44.entities.AuditLog.filter({}, { sort: "-created_date", limit: 100 });
+        const res = await api.entities.AuditLog.filter({}, { sort: "-created_date", limit: 100 });
         setLogs(res.items || []);
       } finally {
         setLoading(false);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { Search, Loader2, UserSearch } from "lucide-react";
 import UserSheet from "@/components/admin/usersheet/UserSheet";
 import { useToast } from "@/components/ui/use-toast";
@@ -21,7 +21,7 @@ export default function UserSearchSection() {
     setLoading(true);
     setSearched(true);
     try {
-      const res = await base44.functions.invoke("adminUserSheet", { email: q });
+      const res = await api.functions.invoke("adminUserSheet", { email: q });
       setSheet(res.data?.found ? res.data : null);
     } catch (err) {
       setSheet(null);

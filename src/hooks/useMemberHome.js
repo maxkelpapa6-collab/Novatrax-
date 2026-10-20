@@ -1,11 +1,11 @@
 import { useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 
 export const MEMBER_HOME_KEY = "memberHome";
 
 async function fetchMemberHome(includeMembers) {
-  const res = await base44.functions.invoke(
+  const res = await api.functions.invoke(
     "memberHome",
     includeMembers ? { include_members: true } : {}
   );

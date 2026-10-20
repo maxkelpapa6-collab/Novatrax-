@@ -3,7 +3,7 @@ import { Image } from "@/components/ui/image";
 
 import { Button } from "@/components/ui/button";
 import { Loader2, Upload, AlertTriangle } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { formatFcfa } from "@/lib/commissions";
 
 const MAX_DESCRIPTION = 500;
@@ -52,7 +52,7 @@ export default function ProductForm({ categories, defaultPhone = "", initial = n
     setUploading(true);
     setUploadError("");
     try {
-      const res = await base44.integrations.Core.UploadPublicFile({ file });
+      const res = await api.integrations.Core.UploadPublicFile({ file });
       setForm((f) => ({ ...f, image_url: res.file_url }));
     } catch (err) {
       setUploadError("Téléversement impossible. Réessayez.");

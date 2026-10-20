@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { Smartphone, GraduationCap, ArrowRight, Lock } from "lucide-react";
 import { Image } from "@/components/ui/image";
 
@@ -18,7 +18,7 @@ export default function ShowcaseSection() {
     let alive = true;
     (async () => {
       try {
-        const res = await base44.functions.invoke("memberContent", {});
+        const res = await api.functions.invoke("memberContent", {});
         if (!alive) return;
         const showcase = res.data?.showcase || [];
         setState({ loading: false, items: showcase, locked: res.data?.locked === true });

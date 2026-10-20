@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { FileDown, Upload, Loader2, Trash2, RefreshCw, PackageOpen } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { isApkFile, formatFileSize, formatFileDate, APK_ACCEPT } from "@/lib/apk";
@@ -18,8 +18,8 @@ export default function ApkFilePanel({ app, onChanged }) {
     }
     setBusy(true);
     try {
-      const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
-      await base44.entities.Application.update(app.id, {
+      const { file_uri } = await api.integrations.Core.UploadPrivateFile({ file });
+      await api.entities.Application.update(app.id, {
         download_type: "apk_file",
         apk_file_uri: file_uri,
         apk_file_name: file.name,
@@ -40,7 +40,7 @@ export default function ApkFilePanel({ app, onChanged }) {
     if (!confirm(`Supprimer le fichier APK « ${app.apk_file_name || ""} » ? L'application sera conservée sans fichier.`)) return;
     setBusy(true);
     try {
-      await base44.entities.Application.update(app.id, {
+      await api.entities.Application.update(app.id, {
         apk_file_uri: null,
         apk_file_name: null,
         apk_file_size: null,

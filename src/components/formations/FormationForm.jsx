@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { X, Save, Loader2, ImagePlus } from "lucide-react";
 import { Image } from "@/components/ui/image";
 
@@ -31,14 +31,14 @@ export default function FormationForm({ formation, onClose, onSaved }) {
 
       // Photo de profil : téléversement public (affichée à tous les membres)
       if (profileFile) {
-        const { file_url } = await base44.integrations.Core.UploadPublicFile({ file: profileFile });
+        const { file_url } = await api.integrations.Core.UploadPublicFile({ file: profileFile });
         payload.profile_image = file_url;
       }
 
       if (formation?.id) {
-        await base44.entities.Formation.update(formation.id, payload);
+        await api.entities.Formation.update(formation.id, payload);
       } else {
-        await base44.entities.Formation.create(payload);
+        await api.entities.Formation.create(payload);
       }
       onSaved();
     } catch (err) {

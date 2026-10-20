@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { useMemberHome, useInvalidateMemberHome } from "@/hooks/useMemberHome";
 import WelcomeCard from "@/components/home/WelcomeCard";
 import FinanceStats from "@/components/home/FinanceStats";
@@ -25,7 +25,7 @@ export default function Home() {
   useEffect(() => {
     const pending = readPendingRef();
     if (pending) {
-      base44.functions.invoke("registerSponsorship", { ref_code: pending })
+      api.functions.invoke("registerSponsorship", { ref_code: pending })
         .then((res) => {
           if (res.data?.ok) {
             clearPendingRef();

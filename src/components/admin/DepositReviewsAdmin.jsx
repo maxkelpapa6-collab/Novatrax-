@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { formatFcfa } from "@/lib/commissions";
 import { toast } from "@/components/ui/use-toast";
 import FinanceBadge from "@/components/FinanceBadge";
@@ -43,7 +43,7 @@ export default function DepositReviewsAdmin() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await base44.functions.invoke("adminDepositReview", { action: "list" });
+      const res = await api.functions.invoke("adminDepositReview", { action: "list" });
       setRows(res.data?.reviews || []);
     } catch (e) {
       setRows([]);
@@ -62,7 +62,7 @@ export default function DepositReviewsAdmin() {
     setExpanded((e) => ({ ...e, [id]: true }));
     if (!details[id]) {
       try {
-        const res = await base44.functions.invoke("adminDepositReview", { action: "details", id });
+        const res = await api.functions.invoke("adminDepositReview", { action: "details", id });
         setDetails((d) => ({ ...d, [id]: res.data || null }));
       } catch (e) {
         setDetails((d) => ({ ...d, [id]: { transactions: [] } }));
@@ -81,7 +81,7 @@ export default function DepositReviewsAdmin() {
     }
     setBusy((b) => ({ ...b, [id]: actionId }));
     try {
-      const res = await base44.functions.invoke("adminDepositReview", {
+      const res = await api.functions.invoke("adminDepositReview", {
         action: actionId,
         id,
         note: (note[id] || "").trim(),

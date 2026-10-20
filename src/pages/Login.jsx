@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Eye, EyeOff } from "lucide-react";
-import SocialLoginButtons from "@/components/SocialLoginButtons";
 import { toast } from "@/components/ui/use-toast";
 import { safeReturnTo } from "@/lib/authReturnTo";
 import { Image } from "@/components/ui/image";
@@ -44,17 +43,17 @@ export default function Login() {
     try {
       let email = identifier.trim();
       if (!email.includes("@")) {
-        const res = await base44.functions.invoke("resolveLoginIdentifier", { identifier: email });
+        const res = await api.functions.invoke("resolveLoginIdentifier", { identifier: email });
         email = res.data?.email;
         if (!email) throw new Error("Identifiants incorrects.");
       }
       setLoginEmail(email);
-      await base44.auth.loginViaEmailPassword(email, password);
+      await api.auth.loginViaEmailPassword(email, password);
       // Un compte bloqué ne doit pas accéder à l'application
       try {
-        const me = await base44.auth.me();
+        const me = await api.auth.me();
         if (me?.account_status === "suspended") {
-          await base44.auth.logout();
+          await api.auth.logout();
           setError("Votre compte a été bloqué par l'administration NOVATRAX. Contactez le support pour plus d'informations.");
           return;
         }
@@ -64,7 +63,7 @@ export default function Login() {
       window.location.href = returnTo;
     } catch (err) {
       const msg = String(err?.response?.data?.error || err?.message || "");
-      if (/verif/i.test(msg)) {
+      if (/v[ée]rifi/i.test(msg)) {
         setError("Votre adresse e-mail n'est pas encore vérifiée. Terminez la vérification avec le code reçu par e-mail.");
         setNeedsVerification(true);
       } else {
@@ -78,7 +77,7 @@ export default function Login() {
   const handleResend = async () => {
     if (!loginEmail) return;
     try {
-      await base44.auth.resendOtp(loginEmail);
+      await api.auth.resendOtp(loginEmail);
       toast({ title: "Code renvoyé", description: "Vérifiez votre boîte de réception." });
     } catch {
       setError("Impossible de renvoyer le code pour le moment.");
@@ -186,14 +185,6 @@ export default function Login() {
           </Button>
         </form>
 
-        <div className="relative my-7">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-          <div className="relative flex justify-center">
-            <span className="bg-white px-4 text-xs text-muted-foreground">Ou connectez-vous avec</span>
-          </div>
-        </div>
-
-        <SocialLoginButtons returnTo={returnTo} />
 
         <p className="mt-8 text-center text-sm text-muted-foreground">
           Vous n'avez pas de compte ?{" "}

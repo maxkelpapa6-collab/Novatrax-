@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { Search, Store, ShoppingBag, ChevronDown, Loader2 } from "lucide-react";
 import ProductCard from "@/components/marketplace/ProductCard";
 
@@ -24,7 +24,7 @@ export default function Marketplace() {
   const [sort, setSort] = useState("-created_date");
 
   useEffect(() => {
-    base44.entities.MarketplaceCategory.filter({ active: true }, { sort: "sort_order", limit: 100 })
+    api.entities.MarketplaceCategory.filter({ active: true }, { sort: "sort_order", limit: 100 })
       .then((p) => setCategories((p.items || []).map((c) => c.name)))
       .catch(() => setCategories([]));
   }, []);
@@ -52,7 +52,7 @@ export default function Marketplace() {
     async (withLoading = true) => {
       if (withLoading) setLoading(true);
       try {
-        const page = await base44.entities.MarketplaceProduct.filter(buildQuery(), {
+        const page = await api.entities.MarketplaceProduct.filter(buildQuery(), {
           sort,
           limit: PAGE_SIZE,
         });
@@ -74,7 +74,7 @@ export default function Marketplace() {
     if (!cursor || loadingMore) return;
     setLoadingMore(true);
     try {
-      const page = await base44.entities.MarketplaceProduct.filter(buildQuery(), {
+      const page = await api.entities.MarketplaceProduct.filter(buildQuery(), {
         sort,
         limit: PAGE_SIZE,
         cursor,

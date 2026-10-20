@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { useAuth } from "@/lib/AuthContext";
 import { Image } from "@/components/ui/image";
 import { formatFcfa } from "@/lib/commissions";
@@ -58,7 +58,7 @@ export default function MarketplaceAdmin() {
 }
 
 function invokeAdmin(payload) {
-  return base44.functions.invoke("marketplaceAdmin", payload).then((res) => res.data || {});
+  return api.functions.invoke("marketplaceAdmin", payload).then((res) => res.data || {});
 }
 
 // ---------- Annonces : modération ----------
@@ -83,7 +83,7 @@ function AdminProducts() {
       const query = {};
       if (status !== "all") query.status = status;
       if (debounced) query.name = { $regex: debounced.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" };
-      const page = await base44.entities.MarketplaceProduct.filter(query, { sort: "-created_date", limit: 100 });
+      const page = await api.entities.MarketplaceProduct.filter(query, { sort: "-created_date", limit: 100 });
       setProducts(page.items || []);
     } finally {
       setLoading(false);
@@ -226,7 +226,7 @@ function AdminOrders() {
     setLoading(true);
     try {
       const query = status === "all" ? {} : { status };
-      const page = await base44.entities.MarketplaceOrder.filter(query, { sort: "-created_date", limit: 100 });
+      const page = await api.entities.MarketplaceOrder.filter(query, { sort: "-created_date", limit: 100 });
       setOrders(page.items || []);
     } finally {
       setLoading(false);
@@ -318,8 +318,8 @@ function AdminRules() {
     setLoading(true);
     try {
       const [catPage, rulePage] = await Promise.all([
-        base44.entities.MarketplaceCategory.filter({}, { sort: "sort_order", limit: 100 }),
-        base44.entities.MarketplaceRule.filter({}, { sort: "-created_date", limit: 200 }),
+        api.entities.MarketplaceCategory.filter({}, { sort: "sort_order", limit: 100 }),
+        api.entities.MarketplaceRule.filter({}, { sort: "-created_date", limit: 200 }),
       ]);
       setCategories(catPage.items || []);
       setRules(rulePage.items || []);

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { downloadFile } from "@/lib/export";
 import { getCountry } from "@/lib/countries";
 import { useAuth } from "@/lib/AuthContext";
@@ -58,7 +58,7 @@ export default function MemberDirectory() {
   const loadSummary = useCallback(async () => {
     if (locked) return;
     try {
-      const res = await base44.functions.invoke("downloadMemberContacts", { action: "summary" });
+      const res = await api.functions.invoke("downloadMemberContacts", { action: "summary" });
       setCounts(res.data?.counts || null);
       setConsent(res.data?.consent === true);
     } catch (e) {
@@ -71,7 +71,7 @@ export default function MemberDirectory() {
     setLoading(true);
     setError("");
     try {
-      const res = await base44.functions.invoke("downloadMemberContacts", {
+      const res = await api.functions.invoke("downloadMemberContacts", {
         action: "directory",
         search: search.trim(),
         limit: DIRECTORY_LIMIT,
@@ -100,7 +100,7 @@ export default function MemberDirectory() {
     setDownloading(true);
     setError("");
     try {
-      const res = await base44.functions.invoke("downloadMemberContacts", {
+      const res = await api.functions.invoke("downloadMemberContacts", {
         action: "download",
         format: "vcf",
         ...rangeParams(),

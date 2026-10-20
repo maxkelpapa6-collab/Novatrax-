@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { Smartphone, Download, Link2, FileDown, Pencil, Trash2, ShoppingCart, Power, Loader2, ExternalLink } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { useToast } from "@/components/ui/use-toast";
@@ -27,7 +27,7 @@ export default function AppCard({ app, isAdmin, onEdit, onDelete, onTogglePublis
   const downloadApk = async () => {
     setDownloading(true);
     try {
-      const res = await base44.functions.invoke("apkDownload", { application_id: app.id });
+      const res = await api.functions.invoke("apkDownload", { application_id: app.id });
       const url = res.data?.url;
       if (!url) throw new Error(res.data?.error || "Téléchargement indisponible.");
       const a = document.createElement("a");

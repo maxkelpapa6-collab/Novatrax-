@@ -1,4 +1,5 @@
 node_modules/
 dist/
-base44/.app.jsonc
-.env*
+data/
+.env
+.env.local

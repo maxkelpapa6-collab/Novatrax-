@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 
 // Compteur de messages non lus pour la boîte de réception (badge de navigation).
 // Mis à jour en temps réel via l'abonnement aux messages de l'utilisateur.
@@ -12,7 +12,7 @@ export default function useUnreadInbox(userId) {
       return;
     }
     try {
-      const count = await base44.entities.InboxMessage.count({ user_id: userId, read: false });
+      const count = await api.entities.InboxMessage.count({ user_id: userId, read: false });
       setUnreadCount(typeof count === "number" ? count : 0);
     } catch {
       setUnreadCount(0);
@@ -24,7 +24,7 @@ export default function useUnreadInbox(userId) {
     if (!userId) return undefined;
     let unsubscribe = null;
     try {
-      unsubscribe = base44.entities.InboxMessage.subscribe(() => refresh());
+      unsubscribe = api.entities.InboxMessage.subscribe(() => refresh());
     } catch {
       // pas d'abonnement temps réel : le compteur se rafraîchit à la navigation
     }

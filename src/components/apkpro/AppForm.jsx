@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { X, Save, Loader2, Link2, FileDown, ImagePlus, Upload } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { resolveDownloadType, isApkFile, formatFileSize, APK_ACCEPT } from "@/lib/apk";
@@ -52,14 +52,14 @@ export default function AppForm({ application, onClose, onSaved }) {
 
       // Image de profil / icône : téléversement public (affichée à tous les membres)
       if (imageFile) {
-        const { file_url } = await base44.integrations.Core.UploadPublicFile({ file: imageFile });
+        const { file_url } = await api.integrations.Core.UploadPublicFile({ file: imageFile });
         payload.logo_image = file_url;
       }
       // Fichier APK : téléversement privé — on enregistre la référence réelle
       // du stockage (file_uri), jamais un simple nom de fichier.
       if (form.download_type === "apk_file" && apkFile) {
         if (!isApkFile(apkFile)) throw new Error("Seuls les fichiers .apk sont acceptés.");
-        const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file: apkFile });
+        const { file_uri } = await api.integrations.Core.UploadPrivateFile({ file: apkFile });
         payload.apk_file_uri = file_uri;
         payload.apk_file_name = apkFile.name;
         payload.apk_file_size = apkFile.size;
@@ -67,9 +67,9 @@ export default function AppForm({ application, onClose, onSaved }) {
       }
 
       if (application?.id) {
-        await base44.entities.Application.update(application.id, payload);
+        await api.entities.Application.update(application.id, payload);
       } else {
-        await base44.entities.Application.create(payload);
+        await api.entities.Application.create(payload);
       }
       onSaved();
     } catch (err) {

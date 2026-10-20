@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { useMemberHome, useInvalidateMemberHome } from "@/hooks/useMemberHome";
 import { formatFcfa } from "@/lib/commissions";
 import { COUNTRIES, getWithdrawalMethods } from "@/lib/countries";
@@ -46,8 +46,8 @@ export default function Wallet() {
       if (withLoading) setLoading(true);
       try {
         const [txPage, wPage] = await Promise.all([
-          base44.entities.Transaction.filter({ user_id: user.id }, { sort: "-created_date", limit: 50 }),
-          base44.entities.Withdrawal.filter({ user_id: user.id }, { sort: "-created_date", limit: 50 }),
+          api.entities.Transaction.filter({ user_id: user.id }, { sort: "-created_date", limit: 50 }),
+          api.entities.Withdrawal.filter({ user_id: user.id }, { sort: "-created_date", limit: 50 }),
         ]);
         setTxs(txPage.items || []);
         setWithdrawals(wPage.items || []);
@@ -67,7 +67,7 @@ export default function Wallet() {
   // Temps réel : le webhook LeekPay confirme le paiement côté serveur et le
   // statut se met à jour ici sans rechargement manuel de la page.
   useEffect(() => {
-    const unsubscribe = base44.entities.Transaction.subscribe(() => {
+    const unsubscribe = api.entities.Transaction.subscribe(() => {
       load(false);
       invalidateMemberHome();
     });
@@ -96,7 +96,7 @@ export default function Wallet() {
     }
     setSubmitting(true);
     try {
-      const res = await base44.functions.invoke("leekpayCheckout", { amount_fcfa: amount });
+      const res = await api.functions.invoke("leekpayCheckout", { amount_fcfa: amount });
       const url = res.data?.payment_url;
       if (!url) throw new Error("URL de paiement indisponible.");
       window.location.href = url;
@@ -115,7 +115,7 @@ export default function Wallet() {
   const handleAccessFeePay = async () => {
     setSubmitting(true);
     try {
-      const res = await base44.functions.invoke("leekpayCheckout", { purpose: "access_fee" });
+      const res = await api.functions.invoke("leekpayCheckout", { purpose: "access_fee" });
       const url = res.data?.payment_url;
       if (!url) throw new Error("URL de paiement indisponible.");
       window.location.href = url;
@@ -155,7 +155,7 @@ export default function Wallet() {
     }
     setSubmitting(true);
     try {
-      const res = await base44.functions.invoke("walletRequest", {
+      const res = await api.functions.invoke("walletRequest", {
         action: "withdrawal",
         amount_fcfa: amount,
         country: withdrawForm.country,

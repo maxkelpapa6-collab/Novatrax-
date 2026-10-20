@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import useUnreadInbox from "@/hooks/useUnreadInbox";
 import { Inbox as InboxIcon, CheckCheck, ChevronDown, Loader2, RefreshCw } from "lucide-react";
 
@@ -39,7 +39,7 @@ export default function Inbox() {
     setLoading(true);
     setError("");
     try {
-      const page = await base44.entities.InboxMessage.filter(
+      const page = await api.entities.InboxMessage.filter(
         { user_id: user.id },
         { sort: "-created_date", limit: 30 }
       );
@@ -62,7 +62,7 @@ export default function Inbox() {
     if (!cursor || moreLoading) return;
     setMoreLoading(true);
     try {
-      const page = await base44.entities.InboxMessage.filter(
+      const page = await api.entities.InboxMessage.filter(
         { user_id: user.id },
         { sort: "-created_date", limit: 30, cursor }
       );
@@ -84,7 +84,7 @@ export default function Inbox() {
     setOpenId(m.id);
     if (!m.read) {
       try {
-        await base44.entities.InboxMessage.update(m.id, { read: true, read_at: new Date().toISOString() });
+        await api.entities.InboxMessage.update(m.id, { read: true, read_at: new Date().toISOString() });
         setMessages((prev) => prev.map((x) => (x.id === m.id ? { ...x, read: true } : x)));
         refreshUnread();
       } catch (e) {
@@ -96,7 +96,7 @@ export default function Inbox() {
   const markAllRead = async () => {
     if (unreadCount === 0) return;
     try {
-      await base44.entities.InboxMessage.updateMany(
+      await api.entities.InboxMessage.updateMany(
         { user_id: user.id, read: false },
         { $set: { read: true, read_at: new Date().toISOString() } }
       );

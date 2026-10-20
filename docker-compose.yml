@@ -1,0 +1,23 @@
+# Lancement complet (site + base de données) : docker compose up -d --build
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MONGODB_URL: mongodb://mongo:27017
+      UPLOAD_DIR: /data/uploads
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads:/data/uploads
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo:/data/db
+volumes:
+  uploads:
+  mongo:

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { Image } from "@/components/ui/image";
 import { Button } from "@/components/ui/button";
 import { LOGO_URL } from "@/components/Logo";
@@ -23,7 +23,7 @@ export default function PaymentLinkPay() {
 
   useEffect(() => {
     setLoading(true);
-    base44.entities.PaymentLink.get(id)
+    api.entities.PaymentLink.get(id)
       .then((l) => {
         setLink(l);
         if (l?.price_type === "variable" && l?.min_fcfa != null) setAmount(String(l.min_fcfa));
@@ -43,7 +43,7 @@ export default function PaymentLinkPay() {
       const payload = { link_id: link.id };
       if (link.price_type === "variable") payload.amount_fcfa = Math.round(Number(amount));
       if (payerName.trim()) payload.payer_name = payerName.trim();
-      const res = await base44.functions.invoke("paymentLinkPay", payload);
+      const res = await api.functions.invoke("paymentLinkPay", payload);
       const data = res.data || {};
       if (data.payment_url) {
         window.location.href = data.payment_url;

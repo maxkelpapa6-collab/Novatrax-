@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { useAuth } from "@/lib/AuthContext";
 import { Image } from "@/components/ui/image";
 import { formatFcfa } from "@/lib/commissions";
@@ -25,7 +25,7 @@ export default function MyPurchases() {
   const load = useCallback(async () => {
     if (!user?.id) return;
     try {
-      const page = await base44.entities.MarketplaceOrder.filter(
+      const page = await api.entities.MarketplaceOrder.filter(
         { buyer_id: user.id },
         { sort: "-created_date", limit: 50 }
       );
@@ -39,7 +39,7 @@ export default function MyPurchases() {
     load();
     // Temps réel : la confirmation de paiement par le prestataire met à jour
     // le statut de la commande sans rechargement manuel.
-    const unsubscribe = base44.entities.MarketplaceOrder.subscribe(() => load());
+    const unsubscribe = api.entities.MarketplaceOrder.subscribe(() => load());
     return unsubscribe;
   }, [load]);
 
@@ -48,7 +48,7 @@ export default function MyPurchases() {
     if (!window.confirm(`Confirmer la réception de « ${order.product_name} » ? Le vendeur recevra son net (${formatFcfa(order.net_fcfa)}).`)) return;
     setBusyId(order.id);
     try {
-      await base44.functions.invoke("marketplaceOrder", { action: "confirm_receipt", order_id: order.id });
+      await api.functions.invoke("marketplaceOrder", { action: "confirm_receipt", order_id: order.id });
       toast({ title: "Réception confirmée", description: "Le vendeur a été crédité de son net. Merci !" });
       load();
     } catch (e) {
@@ -62,7 +62,7 @@ export default function MyPurchases() {
     if (busyId) return;
     setBusyId(order.id);
     try {
-      await base44.functions.invoke("marketplaceOrder", {
+      await api.functions.invoke("marketplaceOrder", {
         action: "dispute",
         order_id: order.id,
         reason: disputeText.trim(),

@@ -4,7 +4,7 @@ import { Menu, X, Globe, LogOut, ChevronDown, Ban, Bell } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { Image } from "@/components/ui/image";
 import { LOGO_URL } from "@/components/Logo";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { BottomNav, Sidebar, MenuList } from "@/components/Navigation";
 import useUnreadInbox from "@/hooks/useUnreadInbox";
 import { useEffect } from "react";

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Eye, EyeOff, ChevronDown } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import SocialLoginButtons from "@/components/SocialLoginButtons";
 import { toast } from "@/components/ui/use-toast";
 import { safeReturnTo } from "@/lib/authReturnTo";
 import { COUNTRIES, getCountry } from "@/lib/countries";
@@ -44,7 +43,7 @@ export default function Register() {
     if (urlRef) savePendingRef(urlRef);
     const code = urlRef || readPendingRef();
     if (code) {
-      base44.functions.invoke("validateSignup", { username: "", ref_code: code })
+      api.functions.invoke("validateSignup", { username: "", ref_code: code })
         .then((res) => {
           if (res.data?.sponsor && (res.data.sponsor.name || res.data.sponsor.username)) {
             setSponsorName(res.data.sponsor.name || res.data.sponsor.username);
@@ -86,7 +85,7 @@ export default function Register() {
     setLoading(true);
     try {
       // Validation côté serveur : disponibilité du nom d'utilisateur + résolution du parrain
-      const check = await base44.functions.invoke("validateSignup", {
+      const check = await api.functions.invoke("validateSignup", {
         username: form.username.trim(),
         ref_code: form.sponsor.trim(),
       });
@@ -99,7 +98,7 @@ export default function Register() {
         setError("Le code de parrainage saisi est invalide. Corrigez-le ou laissez le champ vide.");
         return;
       }
-      await base44.auth.register({ email: form.email.trim(), password: form.password });
+      await api.auth.register({ email: form.email.trim(), password: form.password });
       setShowOtp(true);
     } catch (err) {
       const msg = String(err?.response?.data?.error || err?.message || "");
@@ -115,14 +114,14 @@ export default function Register() {
     setError("");
     setLoading(true);
     try {
-      const result = await base44.auth.verifyOtp({ email: form.email.trim(), otpCode });
+      const result = await api.auth.verifyOtp({ email: form.email.trim(), otpCode });
       if (result?.access_token) {
-        base44.auth.setToken(result.access_token);
+        api.auth.setToken(result.access_token);
       }
       // Enregistrer le profil après vérification
       try {
         const phone = country ? country.dialCode + form.phone.replace(/[\s-]/g, "") : form.phone;
-        await base44.auth.updateMe({
+        await api.auth.updateMe({
           username: form.username.trim(),
           first_name: form.first_name.trim(),
           last_name: form.last_name.trim(),
@@ -137,7 +136,7 @@ export default function Register() {
       }
       // Enregistrer la relation de parrainage côté serveur (une seule fois, non modifiable ensuite)
       try {
-        const ref = await base44.functions.invoke("registerSponsorship", { ref_code: form.sponsor.trim() });
+        const ref = await api.functions.invoke("registerSponsorship", { ref_code: form.sponsor.trim() });
         // Attribution définitive enregistrée : le code temporaire peut être retiré
         if (ref.data?.ok) clearPendingRef();
       } catch (refErr) {
@@ -155,7 +154,7 @@ export default function Register() {
   const handleResend = async () => {
     setError("");
     try {
-      await base44.auth.resendOtp(form.email.trim());
+      await api.auth.resendOtp(form.email.trim());
       toast({ title: "Code renvoyé", description: "Vérifiez votre boîte de réception." });
     } catch (err) {
       setError(err.message || "Impossible de renvoyer le code.");
@@ -395,14 +394,6 @@ export default function Register() {
           </Button>
         </form>
 
-        <div className="relative my-7">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-          <div className="relative flex justify-center">
-            <span className="bg-white px-4 text-xs text-muted-foreground">Ou créez votre compte avec</span>
-          </div>
-        </div>
-
-        <SocialLoginButtons returnTo={safeReturnTo()} />
 
         <p className="mt-8 text-center text-sm text-muted-foreground">
           Vous avez déjà un compte ?{" "}

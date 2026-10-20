@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { Smartphone, Plus } from "lucide-react";
 import FeatureLocked from "@/components/FeatureLocked";
 import AppCard from "@/components/apkpro/AppCard";
@@ -23,14 +23,14 @@ export default function ApkPro() {
     setLoading(true);
     try {
       if (!isAdmin) {
-        const res = await base44.functions.invoke("memberContent", {});
+        const res = await api.functions.invoke("memberContent", {});
         if (res.data?.locked) setLocked(true);
         else {
           setLocked(false);
           setItems(res.data?.applications || []);
         }
       } else {
-        const res = await base44.entities.Application.filter({}, { sort: "-created_date", limit: 100 });
+        const res = await api.entities.Application.filter({}, { sort: "-created_date", limit: 100 });
         setItems(res.items || []);
       }
     } catch (e) {
@@ -48,7 +48,7 @@ export default function ApkPro() {
   const onDelete = async (a) => {
     if (!confirm(`Supprimer l'application « ${a.name} » ? Cette action est définitive.`)) return;
     try {
-      await base44.entities.Application.delete(a.id);
+      await api.entities.Application.delete(a.id);
       setItems((prev) => prev.filter((i) => i.id !== a.id));
     } catch (e) {
       toast({ title: "Suppression impossible", description: e?.response?.data?.error || e?.message || "Erreur", variant: "destructive" });
@@ -65,7 +65,7 @@ export default function ApkPro() {
       return;
     }
     try {
-      await base44.entities.Application.update(a.id, { published: !a.published });
+      await api.entities.Application.update(a.id, { published: !a.published });
       load();
     } catch (e) {
       toast({ title: "Modification impossible", description: e?.response?.data?.error || e?.message || "Erreur", variant: "destructive" });

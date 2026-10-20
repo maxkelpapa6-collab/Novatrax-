@@ -1,6 +1,6 @@
 // Pays disponibles sur NOVATRAX avec indicatifs téléphoniques internationaux.
 // Chaque pays liste les moyens de retrait réellement disponibles localement
-// (miroir de base44/shared/withdrawalMethods.ts, validé côté serveur).
+// (miroir de server/shared/withdrawalMethods.ts, validé côté serveur).
 export const WITHDRAWAL_METHOD_LABELS = {
   mobile_money: "Mobile Money",
   bank_transfer: "Virement bancaire",

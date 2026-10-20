@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { KeyRound, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { formatDateTime } from "./helpers";
@@ -33,7 +33,7 @@ export default function AccessControls({ user, onDone }) {
     }
     setBusy(true);
     try {
-      await base44.functions.invoke("adminUserModeration", {
+      await api.functions.invoke("adminUserModeration", {
         action: "activate_access",
         user_id: user.id,
         reason: reason.trim(),

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { useAuth } from "@/lib/AuthContext";
 import { useMemberHome } from "@/hooks/useMemberHome";
 import { formatFcfa } from "@/lib/commissions";
@@ -39,7 +39,7 @@ export default function MyShop() {
     if (!user?.id) return;
     setLoading(true);
     try {
-      const page = await base44.entities.MarketplaceProduct.filter(
+      const page = await api.entities.MarketplaceProduct.filter(
         { seller_id: user.id },
         { sort: "-created_date", limit: 50 }
       );
@@ -53,7 +53,7 @@ export default function MyShop() {
 
   useEffect(() => {
     load();
-    base44.entities.MarketplaceCategory.filter({ active: true }, { sort: "sort_order", limit: 100 })
+    api.entities.MarketplaceCategory.filter({ active: true }, { sort: "sort_order", limit: 100 })
       .then((p) => setCategories((p.items || []).map((c) => c.name)))
       .catch(() => setCategories([]));
   }, [load]);
@@ -61,7 +61,7 @@ export default function MyShop() {
   const submitProduct = async (data) => {
     setSubmitting(true);
     try {
-      const res = await base44.functions.invoke("marketplaceProduct", {
+      const res = await api.functions.invoke("marketplaceProduct", {
         action: editing === "new" ? "create" : "update",
         product_id: editing !== "new" ? editing.id : undefined,
         ...data,
@@ -92,7 +92,7 @@ export default function MyShop() {
   const removeProduct = async (product) => {
     if (!window.confirm(`Supprimer l'annonce « ${product.name} » ?`)) return;
     try {
-      await base44.functions.invoke("marketplaceProduct", { action: "delete", product_id: product.id });
+      await api.functions.invoke("marketplaceProduct", { action: "delete", product_id: product.id });
       toast({ title: "Annonce supprimée" });
       load();
     } catch (e) {
@@ -232,8 +232,8 @@ function SalesTab({ user, balance }) {
     let alive = true;
     setLoading(true);
     Promise.all([
-      base44.entities.MarketplaceOrder.filter({ seller_id: user.id }, { sort: "-created_date", limit: 50 }),
-      base44.entities.MarketplaceOrder.aggregate({
+      api.entities.MarketplaceOrder.filter({ seller_id: user.id }, { sort: "-created_date", limit: 50 }),
+      api.entities.MarketplaceOrder.aggregate({
         query: { seller_id: user.id },
         groupBy: "status",
         sum: ["net_fcfa", "commission_fcfa"],
@@ -253,7 +253,7 @@ function SalesTab({ user, balance }) {
       .catch(() => alive && setOrders([]))
       .finally(() => alive && setLoading(false));
     // Temps réel : le statut des commandes se met à jour sans rechargement.
-    const unsubscribe = base44.entities.MarketplaceOrder.subscribe(() => {
+    const unsubscribe = api.entities.MarketplaceOrder.subscribe(() => {
       if (alive) setLoading(true);
     });
     return () => { alive = false; unsubscribe(); };

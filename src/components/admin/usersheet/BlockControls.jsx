@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { api } from "@/api/client";
 import { Ban, Unlock, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -34,7 +34,7 @@ export default function BlockControls({ user, onDone }) {
   const call = async (payload, okTitle) => {
     setBusy(true);
     try {
-      await base44.functions.invoke("adminUserModeration", payload);
+      await api.functions.invoke("adminUserModeration", payload);
       toast({ title: okTitle });
       setPanel(null);
       setReason("");
