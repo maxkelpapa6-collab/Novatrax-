@@ -16,6 +16,10 @@ const OTP_MAX_ATTEMPTS = 5;
 const RESET_TTL_MS = 60 * 60 * 1000;
 const TOKEN_TTL = "30d";
 
+// Vérification de l'adresse e-mail par code à l'inscription : désactivée par
+// défaut, activée avec REQUIRE_EMAIL_VERIFICATION=true (SMTP nécessaire).
+const requireVerification = () => process.env.REQUIRE_EMAIL_VERIFICATION === "true";
+
 // Champs que le membre peut modifier lui-même sur son profil.
 const SELF_EDITABLE = ["username", "first_name", "last_name", "full_name", "country", "phone", "share_contacts", "unsubscribed"];
 
@@ -78,7 +82,9 @@ export function authRouter() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail(res, 400, "Adresse e-mail invalide.");
     if (password.length < 8) return fail(res, 400, "Le mot de passe doit contenir au moins 8 caractères.");
     const existing = await users().findOne({ email });
-    if (existing && existing.email_verified) return fail(res, 409, "Cette adresse e-mail est déjà utilisée.");
+    if (existing && (existing.email_verified || !requireVerification())) {
+      return fail(res, 409, "Cette adresse e-mail est déjà utilisée.");
+    }
     const password_hash = await bcrypt.hash(password, 12);
     let doc = existing;
     if (existing) {
@@ -90,6 +96,7 @@ export function authRouter() {
       doc = { _id: id, id, email, role: "user", email_verified: false, account_status: "active", password_hash, created_date: now, updated_date: now };
       await users().insertOne(doc);
     }
+    if (!requireVerification()) return res.json({ ok: true, access_token: signToken(doc) });
     await sendOtp(doc);
     res.json({ ok: true });
   });
@@ -125,7 +132,7 @@ export function authRouter() {
     const doc = await users().findOne({ email });
     const ok = doc && doc.password_hash && (await bcrypt.compare(String(req.body?.password || ""), doc.password_hash));
     if (!ok) return fail(res, 401, "Identifiants incorrects.");
-    if (!doc.email_verified) {
+    if (!doc.email_verified && requireVerification()) {
       if (Date.now() - (doc.otp_sent_at || 0) > OTP_RESEND_MS) await sendOtp(doc);
       return fail(res, 403, "Adresse e-mail non vérifiée.");
     }

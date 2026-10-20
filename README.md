@@ -41,7 +41,7 @@ npm run dev:server        # serveur sur http://localhost:3000
 npm run dev               # site sur http://localhost:5173 (dans un 2e terminal)
 ```
 
-Sans SMTP configuré, les codes de vérification s'affichent dans le terminal du serveur.
+Par défaut, l'inscription ne demande pas de code de vérification par e-mail. Pour l'activer, mettez `REQUIRE_EMAIL_VERIFICATION=true` (un SMTP doit alors être configuré). Sans SMTP, les e-mails s'affichent dans le terminal du serveur.
 
 ## Mise en ligne
 
@@ -49,7 +49,7 @@ Sans SMTP configuré, les codes de vérification s'affichent dans le terminal du
 
 1. Créez une base gratuite sur MongoDB Atlas et copiez son adresse `mongodb+srv://…`.
 2. Sur Render : **New → Blueprint**, choisissez ce dépôt. Le fichier `render.yaml` configure tout ; Render demande seulement `MONGODB_URL`, `ADMIN_SETUP_CODE` et, si vous les avez, les clés LeekPay et SMTP.
-3. Sans SMTP, les codes de vérification apparaissent dans l'onglet **Logs** de Render.
+3. L'inscription se fait sans code de vérification (voir `REQUIRE_EMAIL_VERIFICATION`).
 
 Version gratuite : mise en veille après 15 min sans visite, et les images envoyées sont perdues à chaque redémarrage.
 

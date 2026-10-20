@@ -98,7 +98,13 @@ export default function Register() {
         setError("Le code de parrainage saisi est invalide. Corrigez-le ou laissez le champ vide.");
         return;
       }
-      await api.auth.register({ email: form.email.trim(), password: form.password });
+      const result = await api.auth.register({ email: form.email.trim(), password: form.password });
+      // Sans vérification par e-mail, le compte est connecté immédiatement.
+      if (result?.access_token) {
+        api.auth.setToken(result.access_token);
+        await completeSignup();
+        return;
+      }
       setShowOtp(true);
     } catch (err) {
       const msg = String(err?.response?.data?.error || err?.message || "");
@@ -110,6 +116,34 @@ export default function Register() {
     }
   };
 
+  // Profil et parrainage, enregistrés une fois le compte connecté.
+  const completeSignup = async () => {
+    try {
+      const phone = country ? country.dialCode + form.phone.replace(/[\s-]/g, "") : form.phone;
+      await api.auth.updateMe({
+        username: form.username.trim(),
+        first_name: form.first_name.trim(),
+        last_name: form.last_name.trim(),
+        full_name: [form.first_name.trim(), form.last_name.trim()].filter(Boolean).join(" "),
+        country: form.country,
+        phone,
+        share_contacts: form.shareContacts === true,
+      });
+    } catch (profileErr) {
+      console.warn("Profil non mis à jour:", profileErr);
+    }
+    // Enregistrer la relation de parrainage côté serveur (une seule fois, non modifiable ensuite)
+    try {
+      const ref = await api.functions.invoke("registerSponsorship", { ref_code: form.sponsor.trim() });
+      // Attribution définitive enregistrée : le code temporaire peut être retiré
+      if (ref.data?.ok) clearPendingRef();
+    } catch (refErr) {
+      // Le code reste conservé : l'attribution sera reprise automatiquement à la prochaine connexion
+      console.warn("Parrainage non enregistré:", refErr);
+    }
+    window.location.href = safeReturnTo();
+  };
+
   const handleVerify = async () => {
     setError("");
     setLoading(true);
@@ -118,32 +152,7 @@ export default function Register() {
       if (result?.access_token) {
         api.auth.setToken(result.access_token);
       }
-      // Enregistrer le profil après vérification
-      try {
-        const phone = country ? country.dialCode + form.phone.replace(/[\s-]/g, "") : form.phone;
-        await api.auth.updateMe({
-          username: form.username.trim(),
-          first_name: form.first_name.trim(),
-          last_name: form.last_name.trim(),
-          full_name: [form.first_name.trim(), form.last_name.trim()].filter(Boolean).join(" "),
-          country: form.country,
-          phone,
-          email_verified: true,
-          share_contacts: form.shareContacts === true,
-        });
-      } catch (profileErr) {
-        console.warn("Profil non mis à jour:", profileErr);
-      }
-      // Enregistrer la relation de parrainage côté serveur (une seule fois, non modifiable ensuite)
-      try {
-        const ref = await api.functions.invoke("registerSponsorship", { ref_code: form.sponsor.trim() });
-        // Attribution définitive enregistrée : le code temporaire peut être retiré
-        if (ref.data?.ok) clearPendingRef();
-      } catch (refErr) {
-        // Le code reste conservé : l'attribution sera reprise automatiquement à la prochaine connexion
-        console.warn("Parrainage non enregistré:", refErr);
-      }
-      window.location.href = safeReturnTo();
+      await completeSignup();
     } catch (err) {
       setError(err.message || "Code de vérification invalide ou expiré.");
     } finally {
