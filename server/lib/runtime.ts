@@ -13,6 +13,7 @@ export function waitUntil(promise) {
 }
 
 // URL publique du site (retours de paiement, webhooks, liens des e-mails).
+// Sur Render, l'adresse du service est fournie automatiquement.
 export function appUrl() {
-  return (process.env.APP_URL || "").replace(/\/+$/, "");
+  return (process.env.APP_URL || process.env.RENDER_EXTERNAL_URL || "").replace(/\/+$/, "");
 }

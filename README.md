@@ -45,7 +45,15 @@ Sans SMTP configuré, les codes de vérification s'affichent dans le terminal du
 
 ## Mise en ligne
 
-### Avec Docker (recommandé)
+### Render (gratuit, pour tester)
+
+1. Créez une base gratuite sur MongoDB Atlas et copiez son adresse `mongodb+srv://…`.
+2. Sur Render : **New → Blueprint**, choisissez ce dépôt. Le fichier `render.yaml` configure tout ; Render demande seulement `MONGODB_URL`, `ADMIN_SETUP_CODE` et, si vous les avez, les clés LeekPay et SMTP.
+3. Sans SMTP, les codes de vérification apparaissent dans l'onglet **Logs** de Render.
+
+Version gratuite : mise en veille après 15 min sans visite, et les images envoyées sont perdues à chaque redémarrage.
+
+### Serveur (VPS) avec Docker (recommandé pour la production)
 
 Sur un serveur (VPS) avec Docker installé :
 
@@ -69,13 +77,7 @@ Gardez le processus actif avec `pm2` ou `systemd`.
 
 ## Après la première mise en ligne
 
-1. **Créer l'administrateur** : inscrivez-vous normalement sur le site, puis :
-   ```bash
-   curl -X POST https://www.votre-domaine.com/api/functions/initFirstAdmin \
-     -H "Content-Type: application/json" \
-     -d '{"email":"votre@email.com","setup_code":"<ADMIN_SETUP_CODE>"}'
-   ```
-   Cela ne fonctionne qu'une fois. Les administrateurs suivants sont gérés depuis l'espace administrateur.
+1. **Créer l'administrateur** : inscrivez-vous normalement sur le site, puis ouvrez `/configuration-admin` et saisissez votre e-mail et le code `ADMIN_SETUP_CODE`. Cela ne fonctionne qu'une fois.
 2. **LeekPay** : renseignez `LEEKPAY_SECRET_KEY`. Les webhooks sont envoyés automatiquement à `<APP_URL>/functions/leekpayWebhook`, `/functions/marketplaceWebhook` et `/functions/paymentLinkWebhook`.
 3. **Logo** : remplacez `public/logo.svg` par votre logo.
 

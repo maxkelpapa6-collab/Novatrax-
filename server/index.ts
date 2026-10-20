@@ -63,6 +63,8 @@ export function createApp() {
 
   // Webhooks de paiement (URL fournie au prestataire : <APP_URL>/functions/<nom>)
   app.all("/functions/:name", rawBody, wrap(runFunction));
+  // Code de configuration admin : nombre d'essais limité.
+  app.post("/api/functions/initFirstAdmin", rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: true, legacyHeaders: false }));
   app.post("/api/functions/:name", rawBody, wrap(runFunction));
 
   // Comptes
