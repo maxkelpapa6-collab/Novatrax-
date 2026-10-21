@@ -1,4 +1,14 @@
-// Moteur d'affiliation NOVATRAX — 3 niveaux, commissions sur VENTES RÉELLES.
+Tests obligatoires
+Ajoute ou exécute des tests pour vérifier :
+Le niveau 1 reçoit exactement 1 500 FCFA.
+Le niveau 2 reçoit exactement 700 FCFA.
+Le niveau 3 reçoit exactement 300 FCFA.
+Les bénéficiaires sont corrects pour une chaîne de parrainage à trois niveaux.
+Aucun montant n'est versé deux fois pour le même événement.
+Une transaction annulée ou non éligible ne génère pas de commission.
+Les comptes sans parrain valide ne provoquent pas d'erreur.
+Les soldes, l'historique des commissions et les retraits restent cohérents.
+Les autres fonctionnalités de Novatrax continuent de fonctionne// Moteur d'affiliation NOVATRAX — 3 niveaux, commissions sur VENTES RÉELLES.
 // Les commissions sont calculées uniquement sur les ventes Marketplace
 // terminées, en pourcentage du prix de vente, et sont prélevées sur la
 // commission NOVATRAX (10 %) : le vendeur touche toujours ses 90 %.
