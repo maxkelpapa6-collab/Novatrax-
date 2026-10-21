@@ -4,7 +4,7 @@ services:
     name: novatrax
     runtime: node
     plan: free
-    branch: novatrax-site
+    branch: main
     buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
