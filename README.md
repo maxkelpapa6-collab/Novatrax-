@@ -32,7 +32,7 @@ Les taux se règlent dans `server/shared/commissions.ts`, et leur affichage dans
 
 ## Lancer en local
 
-Il faut **Node.js 22** et **MongoDB** (installé, ou `docker run -d -p 27017:27017 mongo:7`).
+Il faut **Node.js 22**. MongoDB est facultatif en local : sans `MONGODB_URL`, le serveur utilise une base en mémoire (mode test).
 
 ```bash
 npm install
@@ -47,8 +47,8 @@ Par défaut, l'inscription ne demande pas de code de vérification par e-mail. P
 
 ### Render (gratuit, pour tester)
 
-1. Créez une base gratuite sur MongoDB Atlas et copiez son adresse `mongodb+srv://…`.
-2. Sur Render : **New → Blueprint**, choisissez ce dépôt. Le fichier `render.yaml` configure tout ; Render demande seulement `MONGODB_URL`, `ADMIN_SETUP_CODE` et, si vous les avez, les clés LeekPay et SMTP.
+1. Sur Render : **New → Blueprint**, choisissez ce dépôt. Le fichier `render.yaml` configure tout ; Render demande seulement `ADMIN_SETUP_CODE`.
+2. Sans `MONGODB_URL`, le site démarre en **mode test** : base en mémoire, données effacées à chaque redémarrage ou mise en veille. Pour garder les données, créez une base gratuite sur MongoDB Atlas et ajoutez son adresse `mongodb+srv://…` dans `MONGODB_URL` (onglet **Environment**).
 3. L'inscription se fait sans code de vérification (voir `REQUIRE_EMAIL_VERIFICATION`).
 
 Version gratuite : mise en veille après 15 min sans visite, et les images envoyées sont perdues à chaque redémarrage.

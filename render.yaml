@@ -17,18 +17,9 @@ services:
         value: novatrax
       - key: JWT_SECRET
         generateValue: true
-      # Valeurs demandées lors de la création :
-      - key: MONGODB_URL
-        sync: false
+      # Seule valeur demandée à la création : votre code secret administrateur.
       - key: ADMIN_SETUP_CODE
         sync: false
-      - key: LEEKPAY_SECRET_KEY
-        sync: false
-      - key: SMTP_HOST
-        sync: false
-      - key: SMTP_PORT
-        value: "587"
-      - key: SMTP_USER
-        sync: false
-      - key: SMTP_PASS
-        sync: false
+      # À ajouter plus tard dans l'onglet Environment de Render :
+      # MONGODB_URL (sinon mode test : données effacées au redémarrage),
+      # LEEKPAY_SECRET_KEY, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS.

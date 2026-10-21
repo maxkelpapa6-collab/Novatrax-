@@ -60,6 +60,7 @@
     "jspdf": "^4.2.1",
     "lodash": "^4.17.21",
     "lucide-react": "^0.475.0",
+    "mingo": "^7.2.5",
     "moment": "^2.30.1",
     "mongodb": "^6.21.0",
     "multer": "^2.4.0",
