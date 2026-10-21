@@ -16,6 +16,20 @@ const FUNCTIONS_DIR = join(ROOT, "functions");
 const DIST_DIR = resolve(ROOT, "..", "dist");
 const FUNCTION_NAMES = new Set(readdirSync(FUNCTIONS_DIR).filter((n) => existsSync(join(FUNCTIONS_DIR, n, "entry.ts"))));
 
+// Filet de sécurité : aucune valeur secrète ne doit apparaître dans une
+// réponse envoyée au navigateur (message d'erreur, par exemple).
+const SECRET_ENV_KEYS = ["LEEKPAY_SECRET_KEY", "JWT_SECRET", "ADMIN_SETUP_CODE", "SMTP_PASS", "MONGODB_URL", "FILES_SECRET"];
+function maskSecrets(text) {
+  let out = text;
+  for (const key of SECRET_ENV_KEYS) {
+    const raw = process.env[key] || "";
+    for (const value of new Set([raw, raw.trim(), raw.replace(/\s+/g, "")])) {
+      if (value.length >= 8) out = out.split(value).join("[masqué]");
+    }
+  }
+  return out;
+}
+
 // Gestionnaire d'erreurs commun des routes asynchrones.
 const wrap = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
@@ -50,7 +64,9 @@ async function runFunction(req, res) {
   response.headers.forEach((value, key) => {
     if (key.toLowerCase() !== "content-length") res.setHeader(key, value);
   });
-  res.send(Buffer.from(await response.arrayBuffer()));
+  const type = response.headers.get("content-type") || "";
+  const buffer = Buffer.from(await response.arrayBuffer());
+  res.send(/json|text/.test(type) ? maskSecrets(buffer.toString("utf8")) : buffer);
 }
 
 export function createApp() {
@@ -153,7 +169,7 @@ export function createApp() {
   app.use((err, _req, res, _next) => {
     const status = err.status || err.statusCode || 500;
     if (status >= 500) console.error(err);
-    res.status(status).json({ error: status >= 500 && process.env.NODE_ENV === "production" ? "Erreur serveur." : err.message });
+    res.status(status).json({ error: status >= 500 && process.env.NODE_ENV === "production" ? "Erreur serveur." : maskSecrets(String(err.message)) });
   });
   return app;
 }

@@ -3,7 +3,7 @@
 
 export const secrets = {
   get(name) {
-    return process.env[name] || "";
+    return (process.env[name] || "").trim();
   }
 };
 

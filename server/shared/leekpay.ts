@@ -16,16 +16,25 @@ export function normalizeStatus(raw) {
 
 export async function leekpayRequest(path, options) {
   const opts = options || {};
-  const res = await fetch(LEEKPAY_API + path, {
-    method: opts.method || "GET",
-    headers: {
-      "Authorization": "Bearer " + opts.secret,
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    body: opts.body === undefined ? undefined : JSON.stringify(opts.body),
-    signal: AbortSignal.timeout(15000)
-  });
+  // Une clé collée avec un espace ou un retour à la ligne reste utilisable.
+  const secret = String(opts.secret || "").replace(/\s+/g, "");
+  let res;
+  try {
+    res = await fetch(LEEKPAY_API + path, {
+      method: opts.method || "GET",
+      headers: {
+        "Authorization": "Bearer " + secret,
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: opts.body === undefined ? undefined : JSON.stringify(opts.body),
+      signal: AbortSignal.timeout(15000)
+    });
+  } catch (e) {
+    // Le message d'origine peut contenir la clé : jamais renvoyé au navigateur.
+    console.error("[LeekPay] requête impossible :", e?.name || "erreur");
+    throw new Error("Service de paiement momentanément indisponible. Réessayez plus tard.");
+  }
   const text = await res.text();
   let data = null;
   try {
