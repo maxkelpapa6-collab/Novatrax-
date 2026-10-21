@@ -1,6 +1,8 @@
 // Intégration LeekPay — logique partagée entre le checkout, le webhook
 // et la vérification administrateur. La clé secrète ne quitte jamais le serveur.
-export const LEEKPAY_API = "https://leekpay.fr/api/v1";
+// Adresse de l'API LeekPay : modifiable avec LEEKPAY_API_URL si la
+// documentation LeekPay indique une autre adresse.
+export const LEEKPAY_API = (process.env.LEEKPAY_API_URL || "https://leekpay.fr/api/v1").replace(/\/+$/, "");
 
 const PAID_STATUSES = ["paid", "succeeded", "success", "completed", "confirmed"];
 const FAILED_STATUSES = ["failed", "canceled", "cancelled", "expired", "rejected", "abandoned"];
